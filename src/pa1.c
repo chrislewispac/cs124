@@ -3,14 +3,24 @@
 
 typedef struct
 {
-  struct node* next;
+  double weight;
+  int to;
+  struct edge* next;
+}
+edge;
+
+edge* head;
+
+typedef struct
+{
+  struct edge* head;
   int id;
 }
 node;
 
 void insertNewNode(node *n, int id)
 {
-  n->next = NULL;
+  n->head = head;
   n->id = id;
 }
 
@@ -35,9 +45,15 @@ int main( int argc, char *argv[] )
   node verts[numpoints];
 
   int i = 0;
+  int x;
   while (i < numpoints) {
-    insertNewNode(&verts[i], i);
-    printf("Vertex # %d: %u\n", i, verts[i].id);
+    if (i == 0) {
+      insertNewNode(&verts[i], i);
+    } else {
+      x = i - 1;
+      insertNewNode(&verts[i], i);
+    }
+    printf("Vertex # %u \n", verts[i].id);
     i++;
   };
 
