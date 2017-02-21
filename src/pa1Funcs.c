@@ -1,9 +1,6 @@
-#include <stdio.h>
 #include <pa1.h>
+#include <stdio.h>
 
-void myPrintHelloMake(void) {
-
-  printf("Hello makefiles!\n");
-
-  return;
+double rand_double() {
+  return rand()/(double)RAND_MAX;
 }
