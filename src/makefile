@@ -10,7 +10,7 @@ LIBS=-lm
 _DEPS = pa1.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = pa1.o pa1Funcs.o
+_OBJ = pa1.o pa1Funcs.o pa1Tests.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
