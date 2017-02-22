@@ -2,5 +2,5 @@
 #include <limits.h>
 #include <stdlib.h>
 
-void myPrintHelloMake(void);
+int PrintOne();
 double rand_double();
