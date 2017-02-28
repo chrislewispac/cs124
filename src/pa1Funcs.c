@@ -9,36 +9,79 @@ int PrintOne() {
   return 1;
 }
 
-int CalculateNumEdges(int v) {
+int CalculateNumEs(int v) {
   return (v * (v-1))/2;
 }
 
-void InsertNewNode(node *n, int id)
+struct E* newE(int to)
 {
-  edge* edgeHead;
-  n->head = edgeHead;
-  n->id = id;
+    struct E* newE = (struct E*) malloc(sizeof(struct E));
+    newE->next = NULL;
+    newE->to = to;
+    return newE;
 }
 
-int MakeEdges(int v)
+struct Graph* createGraph(int size, int dimension)
 {
-  int counter = 0;
-  int i = 0;
-  while (i < v){
-    int x = i;
-    while (x < v){
-      if (x != i){
-        edge* newEdge = malloc(sizeof(edge));
-        newEdge->from = i;
-        newEdge->to = x;
-        newEdge->weight = RandDouble();
-        printf("From = %d To = %d Weight = %f \n", newEdge->from, newEdge->to, newEdge->weight);
-        counter++;
-      }
-      x++;
-    }
+    struct Graph* graph = (struct Graph*) malloc(sizeof(struct Graph));
+    graph->node = (struct Node*) malloc(size * sizeof(struct Node));
 
-    i++;
-  }
-  return counter;
+    graph->size = size;
+
+    int i = 0;
+    while (i < size) {
+      graph->node[i].head = NULL;
+      switch (dimension) {
+        case 2:
+          graph->node[i].x = RandDouble();
+          graph->node[i].y = RandDouble();
+          break;
+        case 3:
+          graph->node[i].x = RandDouble();
+          graph->node[i].y = RandDouble();
+          graph->node[i].z = RandDouble();
+          break;
+        case 4:
+          graph->node[i].w = RandDouble();
+          graph->node[i].x = RandDouble();
+          graph->node[i].y = RandDouble();
+          graph->node[i].z = RandDouble();
+          break;
+      }
+      i++;
+    };
+
+    return graph;
+}
+
+void addE(struct Graph* graph, int from, int to)
+{
+    struct E* newEdge = newE(to);
+    newEdge->next = graph->node[from].head;
+    newEdge->weight = RandDouble();
+
+    graph->node[from].head = newEdge;
+
+    newEdge = newE(from);
+    newEdge->next = graph->node[to].head;
+    newEdge->weight = RandDouble();
+    graph->node[to].head = newEdge;
+}
+
+// A utility function to print the adjacenncy list representation of graph
+void printGraph(struct Graph* graph)
+{
+    int v;
+    for (v = 0; v < graph->size; ++v)
+    {
+        struct E* pCrawl = graph->node[v].head;
+        struct Node nd = graph->node[v];
+        printf("Adjacency list of vertex %d coordinates w=%f, x=%f, y=%f, z=%f\n head ", v, nd.w, nd.x, nd.y, nd.z);
+        while (pCrawl)
+        {
+            printf("-> %d, %f", pCrawl->to, pCrawl->weight);
+            pCrawl = pCrawl->next;
+        }
+        printf("\n");
+    }
 }

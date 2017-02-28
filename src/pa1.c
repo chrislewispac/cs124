@@ -24,22 +24,19 @@ int main( int argc, char *argv[] )
   //Seed random ints, run only once or else produces same number
   srand((long)time(NULL));
 
-  node verts[numpoints];
+  struct Graph* graph = createGraph(numpoints, dimension);
 
   int i = 0;
-  int x;
-  while (i < numpoints) {
-    if (i == 0) {
-      InsertNewNode(&verts[i], i);
-    } else {
-      x = i - 1;
-      InsertNewNode(&verts[i], i);
+  while (i < numpoints)
+  {
+    int x = i+1;
+    while (x < numpoints){
+        addE(graph, i, x);
+        x++;
     }
-
-    printf("Vertex # %u \n", verts[i].id);
     i++;
-  };
+  }
 
-  MakeEdges(numpoints);
+  printGraph(graph);
 
 }

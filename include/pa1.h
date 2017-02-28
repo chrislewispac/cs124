@@ -2,27 +2,36 @@
 #include <limits.h>
 #include <stdlib.h>
 
-typedef struct edge
+struct E
 {
-  double weight;
-  int to;
-  int from;
-  struct edge* next;
-}
-edge;
+    int to;
+    double weight;
+    struct E* next;
+};
 
-typedef struct node
+struct Node
 {
-  struct edge* head;
-  int id;
-}
-node;
+    struct E *head;
+    double w;
+    double x;
+    double y;
+    double z;
+};
 
-int MakeEdges(int v);
+struct Graph
+{
+    struct Node* node;
+    int size;
+};
+
 int PrintOne();
-int CalculateNumEdges(int v);
+int CalculateNumEs(int v);
 double RandDouble();
-void InsertNewNode(node *n, int id);
+void addE();
+void printGraph();
+struct E* newE(int to);
+struct Graph* createGraph(int size, int dimension);
+void test_fixture_hello(void);
 void test_fixture_hello(void);
 void test_hello_world();
 void all_tests(void);
