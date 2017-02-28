@@ -1,5 +1,20 @@
 #include <pa1.h>
 #include <stdio.h>
+#include <time.h>
+
+double mst_weight;
+
+int recurse_on_nodes (int num_nodes, int num_other_nodes, struct Graph* graph, int dimension){
+  if (num_other_nodes > 0  ) {
+    addE(graph, num_nodes, num_other_nodes, dimension);
+    recurse_on_nodes(num_nodes, (num_other_nodes - 1), graph, dimension);
+  } else if (num_nodes > 1) {
+    addE(graph, num_nodes, num_other_nodes, dimension);
+    recurse_on_nodes((num_nodes -1), (num_nodes -2), graph, dimension);
+  } else if (num_nodes = 1) {
+    addE(graph, num_nodes, num_other_nodes);
+  }
+}
 
 int main( int argc, char *argv[] )
 {
@@ -22,20 +37,24 @@ int main( int argc, char *argv[] )
   }
 
   //Seed random ints, run only once or else produces same number
-  srand((long)time(NULL));
+  time_t t;
+  srand((unsigned)time(&t));
 
   struct Graph* graph = createGraph(numpoints, dimension);
 
-  int i = 0;
-  while (i < numpoints)
-  {
-    int x = i+1;
-    while (x < numpoints){
-        addE(graph, i, x);
-        x++;
-    }
-    i++;
-  }
+
+  recurse_on_nodes((numpoints-1), (numpoints -2), graph, dimension);
+  //
+  // int i = 0;
+  // while (i < numpoints)
+  // {
+  //   int x = i+1;
+  //   while (x < numpoints){
+  //       addE(graph, i, x, dimension);
+  //       x++;
+  //   }
+  //   i++;
+  // }
 
   printGraph(graph);
 

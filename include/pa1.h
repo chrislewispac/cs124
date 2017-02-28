@@ -12,6 +12,7 @@ struct E
 struct Node
 {
     struct E *head;
+    int visited; //0 or 1
     double w;
     double x;
     double y;
@@ -26,6 +27,7 @@ struct Graph
 
 int PrintOne();
 int CalculateNumEs(int v);
+double CalculateWeight();
 double RandDouble();
 void addE();
 void printGraph();
