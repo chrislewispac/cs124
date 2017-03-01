@@ -25,14 +25,21 @@ struct Graph
     int size;
 };
 
+struct Heapish {
+  double total_mst_weight;
+  double current_min_weight;
+  int current_min_node;
+};
+
 int PrintOne();
 int CalculateNumEs(int v);
 double CalculateWeight();
 double RandDouble();
-void addE();
+int addE();
 void printGraph();
 struct E* newE(int to);
 struct Graph* createGraph(int size, int dimension);
+struct Heapish* createHeapish();
 void test_fixture_hello(void);
 void test_fixture_hello(void);
 void test_hello_world();

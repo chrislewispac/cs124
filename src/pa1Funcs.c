@@ -47,11 +47,21 @@ struct E* newE(int to)
     return newE;
 }
 
+struct Heapish* createHeapish()
+{
+  struct Heapish* heapish = (struct Heapish*) malloc(sizeof(struct Heapish));
+  heapish->current_min_weight = 1000000;
+  heapish->current_min_node = 0;
+  heapish->total_mst_weight = 0;
+  return heapish;
+}
+
 struct Graph* createGraph(int size, int dimension)
 {
     struct Graph* graph = (struct Graph*) malloc(sizeof(struct Graph));
     graph->node = (struct Node*) malloc(size * sizeof(struct Node));
 
+    graph->node->visited = 0;
     graph->size = size;
 
     int i = 0;
@@ -80,37 +90,38 @@ struct Graph* createGraph(int size, int dimension)
     return graph;
 }
 
-void addE(struct Graph* graph, int from, int to, int dimensions)
+int addE(struct Graph* graph, int from, int to, int dimensions)
 {
+      if (graph->node[to].visited == 0){
+        double w1 = graph->node[from].w;
+        double x1 = graph->node[from].x;
+        double y1 = graph->node[from].y;
+        double z1 = graph->node[from].z;
+        double w2 = graph->node[to].w;
+        double x2 = graph->node[to].x;
+        double y2 = graph->node[to].y;
+        double z2 = graph->node[to].z;
 
+        double weight = CalculateWeight( w1,  x1,  y1,  z1,  w2,  x2,  y2,  z2, dimensions);
 
+        struct E* newEdge = newE(to);
+        newEdge->next = graph->node[from].head;
+        graph->node[from].head = newEdge;
+        newEdge->weight = weight;
 
-    double w1 = graph->node[from].w;
-    double x1 = graph->node[from].x;
-    double y1 = graph->node[from].y;
-    double z1 = graph->node[from].z;
-    double w2 = graph->node[to].w;
-    double x2 = graph->node[to].x;
-    double y2 = graph->node[to].y;
-    double z2 = graph->node[to].z;
-
-    double weight = CalculateWeight( w1,  x1,  y1,  z1,  w2,  x2,  y2,  z2, dimensions);
-
-    printf("weight %f\n", weight);
-
-    struct E* newEdge = newE(to);
-    newEdge->next = graph->node[from].head;
-    graph->node[from].head = newEdge;
-    newEdge->weight = weight;
-
-    newEdge = newE(from);
-    newEdge->next = graph->node[to].head;
-    graph->node[to].head = newEdge;
-    newEdge->weight = weight;
+        newEdge = newE(from);
+        newEdge->next = graph->node[to].head;
+        graph->node[to].head = newEdge;
+        newEdge->weight = weight;
+        return 1;
+      } else {
+        //printf("%d already visited\n", to);
+        return 0;
+      }
 
 }
 
-// A utility function to print the adjacenncy list representation of graph
+
 void printGraph(struct Graph* graph)
 {
     int v;
