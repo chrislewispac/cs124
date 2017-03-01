@@ -90,7 +90,7 @@ struct Graph* createGraph(int size, int dimension)
     return graph;
 }
 
-int addE(struct Graph* graph, int from, int to, int dimensions)
+int addE(struct Graph* graph, int from, int to, int dimensions, int numpoints)
 {
       if (graph->node[to].visited == 0){
         double w1 = graph->node[from].w;
@@ -104,15 +104,27 @@ int addE(struct Graph* graph, int from, int to, int dimensions)
 
         double weight = CalculateWeight( w1,  x1,  y1,  z1,  w2,  x2,  y2,  z2, dimensions);
 
+        // if (numpoints > 2048) {
+        //   if (dimensions == 1) {
+        //
+        //   } else if (dimensions == 2 && weight > 0.7) {
+        //     return 0;
+        //   } else if (dimensions == 3 && weight > 0.7) {
+        //     return 0;
+        //   } else if (dimensions == 4 && weight > 0.7) {
+        //     return 0;
+        //   }
+        // }
+
         struct E* newEdge = newE(to);
         newEdge->next = graph->node[from].head;
         graph->node[from].head = newEdge;
         newEdge->weight = weight;
 
-        newEdge = newE(from);
-        newEdge->next = graph->node[to].head;
-        graph->node[to].head = newEdge;
-        newEdge->weight = weight;
+        // newEdge = newE(from);
+        // newEdge->next = graph->node[to].head;
+        // graph->node[to].head = newEdge;
+        // newEdge->weight = weight;
         return 1;
       } else {
         //printf("%d already visited\n", to);

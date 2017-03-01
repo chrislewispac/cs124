@@ -49,7 +49,7 @@ int main( int argc, char *argv[] )
             // while (enter != '\r' && enter != '\n') { enter = getchar(); }
 
             if (graph->node[outer].visited == 0 && inner != outer){
-              addE(graph, outer, inner, dimension);
+              addE(graph, outer, inner, dimension, numpoints);
               //printf("inner %d \n", inner);
             }
 
