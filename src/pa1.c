@@ -1,6 +1,12 @@
 #include <pa1.h>
 #include <stdio.h>
 #include <time.h>
+#include <math.h>
+#include <string.h>
+
+double max_min_weight = 1;
+double growth_rate = 0;
+int counter = 0;
 
 int main( int argc, char *argv[] )
 {
@@ -15,7 +21,6 @@ int main( int argc, char *argv[] )
   int numpoints = strtol(argv[2], NULL, 10);
   int numtrials = strtol(argv[3], NULL, 10);
   int dimension = strtol(argv[4], NULL, 10);
-  //printf("custom = %d, numpoints = %d, numtrials = %d, dimension = %d \n", custom, numpoints, numtrials, dimension);
 
   //run tests if test flag given
   if (custom == 1){
@@ -28,72 +33,96 @@ int main( int argc, char *argv[] )
 
   double results[numtrials];
   int trials = numtrials;
+  int breakpoint = (numpoints - 1) * 0.90;
+  //initialize arr for every trial for quicker check if visited
+  int visited[numpoints];
+
 
   while (numtrials != 0){
     struct Graph* graph = createGraph(numpoints, dimension);
-
     struct Heapish* tracker = createHeapish();
 
+    //set arr contents to 0 for each trial
+    memset(visited, 0, sizeof visited);
 
+    //iterate backwards over nodes
     int outer = numpoints - 1;
     while (outer >= 0)
     {
-      //printf("outer %d \n", outer);
+      //iterate backwards over edges
       int inner = numpoints - 1;
-      // char enter = 0;
-      // printf("Press enter to continue outer = %d inner = %d \n", outer, inner);
-      // while (enter != '\r' && enter != '\n') { enter = getchar(); }
-      while (inner >= 0){
-            // printf("Press enter to continue outer = %d inner = %d \n", outer, inner);
-            // char enter = 0;
-            // while (enter != '\r' && enter != '\n') { enter = getchar(); }
 
-            if (graph->node[outer].visited == 0 && inner != outer){
-              addE(graph, outer, inner, dimension, numpoints);
-              //printf("inner %d \n", inner);
+      while (inner >= 0){
+
+            //if not visite and not itself
+            if (visited[inner] == 0 && inner != outer){
+              //calculate max expected weight
+              double expected = max_min_weight + 0.07;
+              int ignore_max_weight = counter > breakpoint;
+
+              //generate edge conditionally depending on weight generated
+              addE(graph, outer, inner, dimension, numpoints, expected, ignore_max_weight);
             }
 
           inner--;
       }
 
-      graph->node[outer].visited =1;
+      //mark as visited after all edges searched
+      visited[outer] = 1;
+      // printf("visited node %d\n", counter);
 
+      //reset tracker
       tracker->current_min_node = INT_MAX;
       tracker->current_min_weight = INT_MAX;
 
+      //capture each node's edge list after it is generated
       struct E* p = graph->node[outer].head;
       struct Node nd = graph->node[outer];
 
+      //search the edge list for min edge to node not visited.
       while (p)
       {
-        //printf("examining node %d visited? %d current_min_weight %f \n", p->to, graph->node[p->to].visited, tracker->current_min_weight);
-        if (graph->node[p->to].visited == 0 && p->weight < tracker->current_min_weight) {
+        if (visited[p->to] == 0 && p->weight < tracker->current_min_weight) {
           tracker->current_min_weight = p->weight;
           tracker->current_min_node = p->to;
         }
 
         p = p->next;
       }
-      //printf("current_min_weight %f, current_min_node %d, total_mst_weight %f \n", tracker->current_min_weight, tracker->current_min_node, tracker->total_mst_weight);
-      //printf("\n");
+
+      deleteAllNodes(graph->node[outer].head);
+
+      //go to the node with the min edge weight
       int next_node = tracker->current_min_node;
 
+      //base case, no change in min
       if (tracker->current_min_weight != INT_MAX) {
+
           tracker->total_mst_weight += tracker->current_min_weight;
-          free(graph->node[outer].head);
+
+          //keep track of max seen, this is used with padding to trash really high edges
+          if (tracker->current_min_weight > max_min_weight) {
+            max_min_weight = tracker->current_min_weight;
+          }
+
+          //visit next node
           outer = next_node;
+
+          counter++;
       } else {
           outer = -1;
-          // printf("min_span_tree = %f \n", tracker->total_mst_weight);
           results[numtrials] = tracker->total_mst_weight;
       }
     }
 
-    // printGraph(graph);
+   free(tracker);
+   free(graph->node);
+   free(graph);
     numtrials--;
 
   }
 
+  //gen report
   double sum = 0;
   numtrials = trials;
   double num = trials;
@@ -103,6 +132,7 @@ int main( int argc, char *argv[] )
   };
 
   double avg = sum/num;
+
   //output format = average numpoints numtrials dimension
   printf("%f %d %d %d \n", avg, numpoints, numtrials, dimension);
 

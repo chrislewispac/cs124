@@ -12,7 +12,6 @@ struct E
 struct Node
 {
     struct E *head;
-    int visited; //0 or 1
     double w;
     double x;
     double y;
@@ -22,6 +21,7 @@ struct Node
 struct Graph
 {
     struct Node* node;
+    void* allocated_nodes_at;
     int size;
 };
 
@@ -32,6 +32,7 @@ struct Heapish {
 };
 
 int PrintOne();
+void deleteAllNodes();
 int CalculateNumEs(int v);
 double CalculateWeight();
 double RandDouble();

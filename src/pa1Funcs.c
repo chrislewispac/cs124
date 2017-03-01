@@ -42,7 +42,7 @@ double CalculateWeight(double w1, double x1, double y1, double z1, double w2, do
 
 struct E* newE(int to)
 {
-    struct E* newE = (struct E*) malloc(sizeof(struct E));
+    struct E* newE = malloc(sizeof(struct E));
     newE->next = NULL;
     newE->to = to;
     return newE;
@@ -50,7 +50,7 @@ struct E* newE(int to)
 
 struct Heapish* createHeapish()
 {
-  struct Heapish* heapish = (struct Heapish*) malloc(sizeof(struct Heapish));
+  struct Heapish* heapish = malloc(sizeof(struct Heapish));
   heapish->current_min_weight = INT_MAX;
   heapish->current_min_node = 0;
   heapish->total_mst_weight = 0;
@@ -59,10 +59,8 @@ struct Heapish* createHeapish()
 
 struct Graph* createGraph(int size, int dimension)
 {
-    struct Graph* graph = (struct Graph*) malloc(sizeof(struct Graph));
-    graph->node = (struct Node*) malloc(size * sizeof(struct Node));
-
-    graph->node->visited = 0;
+    struct Graph* graph =  malloc(sizeof(struct Graph));
+    graph->node = malloc(size * sizeof(struct Node));
     graph->size = size;
 
     int i = 0;
@@ -91,9 +89,8 @@ struct Graph* createGraph(int size, int dimension)
     return graph;
 }
 
-int addE(struct Graph* graph, int from, int to, int dimensions, int numpoints)
+int addE(struct Graph* graph, int from, int to, int dimensions, int numpoints, double expected, int breakpoint)
 {
-      if (graph->node[to].visited == 0){
         double w1 = graph->node[from].w;
         double x1 = graph->node[from].x;
         double y1 = graph->node[from].y;
@@ -105,17 +102,9 @@ int addE(struct Graph* graph, int from, int to, int dimensions, int numpoints)
 
         double weight = CalculateWeight( w1,  x1,  y1,  z1,  w2,  x2,  y2,  z2, dimensions);
 
-        // if (numpoints > 2048) {
-        //   if (dimensions == 1) {
-        //
-        //   } else if (dimensions == 2 && weight > 0.7) {
-        //     return 0;
-        //   } else if (dimensions == 3 && weight > 0.7) {
-        //     return 0;
-        //   } else if (dimensions == 4 && weight > 0.7) {
-        //     return 0;
-        //   }
-        // }
+        if (weight > expected && breakpoint < 1) {
+          return 0;
+        }
 
         struct E* newEdge = newE(to);
         newEdge->next = graph->node[from].head;
@@ -123,9 +112,32 @@ int addE(struct Graph* graph, int from, int to, int dimensions, int numpoints)
         newEdge->weight = weight;
 
         return 1;
-      } else {
-        //printf("%d already visited\n", to);
-        return 0;
-      }
 
+}
+
+void deleteAllNodes(struct E* start)
+{
+    while (start != NULL)
+    {
+        struct E* temp = start;
+        free(temp);
+        start = start->next;
+    }
+}
+
+void printGraph(struct Graph* graph)
+{
+    int v;
+    for (v = 0; v < graph->size; ++v)
+    {
+        struct E* p = graph->node[v].head;
+        struct Node nd = graph->node[v];
+        printf("\nAdjacency list of vertex %d coordinates w=%f, x=%f, y=%f, z=%f\n head ", v, nd.w, nd.x, nd.y, nd.z);
+        while (p)
+        {
+            printf("-> %d, %f", p->to, p->weight);
+            p = p->next;
+        }
+        printf("\n");
+    }
 }
