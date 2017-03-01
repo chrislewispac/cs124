@@ -58,8 +58,8 @@ int main( int argc, char *argv[] )
 
       graph->node[outer].visited =1;
 
-      tracker->current_min_node = 10000000;
-      tracker->current_min_weight = 10000000;
+      tracker->current_min_node = INT_MAX;
+      tracker->current_min_weight = INT_MAX;
 
       struct E* p = graph->node[outer].head;
       struct Node nd = graph->node[outer];
@@ -75,10 +75,10 @@ int main( int argc, char *argv[] )
         p = p->next;
       }
       //printf("current_min_weight %f, current_min_node %d, total_mst_weight %f \n", tracker->current_min_weight, tracker->current_min_node, tracker->total_mst_weight);
-      // printf("\n");
+      //printf("\n");
       int next_node = tracker->current_min_node;
 
-      if (tracker->current_min_weight!= 10000000) {
+      if (tracker->current_min_weight != INT_MAX) {
           tracker->total_mst_weight += tracker->current_min_weight;
           free(graph->node[outer].head);
           outer = next_node;

@@ -36,6 +36,7 @@ double CalculateWeight(double w1, double x1, double y1, double z1, double w2, do
       break;
     default:
       return RandDouble();
+      break;
   }
 }
 
@@ -50,7 +51,7 @@ struct E* newE(int to)
 struct Heapish* createHeapish()
 {
   struct Heapish* heapish = (struct Heapish*) malloc(sizeof(struct Heapish));
-  heapish->current_min_weight = 1000000;
+  heapish->current_min_weight = INT_MAX;
   heapish->current_min_node = 0;
   heapish->total_mst_weight = 0;
   return heapish;
@@ -121,32 +122,10 @@ int addE(struct Graph* graph, int from, int to, int dimensions, int numpoints)
         graph->node[from].head = newEdge;
         newEdge->weight = weight;
 
-        // newEdge = newE(from);
-        // newEdge->next = graph->node[to].head;
-        // graph->node[to].head = newEdge;
-        // newEdge->weight = weight;
         return 1;
       } else {
         //printf("%d already visited\n", to);
         return 0;
       }
 
-}
-
-
-void printGraph(struct Graph* graph)
-{
-    int v;
-    for (v = 0; v < graph->size; ++v)
-    {
-        struct E* p = graph->node[v].head;
-        struct Node nd = graph->node[v];
-        printf("\nAdjacency list of vertex %d coordinates w=%f, x=%f, y=%f, z=%f\n head ", v, nd.w, nd.x, nd.y, nd.z);
-        while (p)
-        {
-            printf("-> %d, %f", p->to, p->weight);
-            p = p->next;
-        }
-        printf("\n");
-    }
 }
